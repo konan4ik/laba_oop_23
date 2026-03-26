@@ -1,30 +1,41 @@
 package notification_system
 
 import (
+	"fmt"
+	o "laba/observer"
 	p "laba/patient"
 )
 
-type HospitalNotificationSystem struct {
-	Observers []p.Observer
+type NotificationSystem struct {
+	Observers []o.Observer
+	Patients  []p.Patient
 }
 
-var instance *HospitalNotificationSystem
+var instance *NotificationSystem
 
-func Instance() *HospitalNotificationSystem {
+func Instance() *NotificationSystem {
 	if instance == nil {
-		instance = &HospitalNotificationSystem{}
+		instance = &NotificationSystem{}
 	}
 	return instance
 }
 
-func (ns HospitalNotificationSystem) Register_patient(p p.Patient) {
-
+func (ns *NotificationSystem) AddObserver(obs o.Observer) {
+	ns.Observers = append(ns.Observers, obs)
 }
 
-func (ns HospitalNotificationSystem) Send_notification(p p.Patient) {
-
+func (ns *NotificationSystem) RegisterPatient(patient p.Patient) {
+	ns.Patients = append(ns.Patients, patient)
+	ns.SendNotification(patient)
 }
 
-func (ns HospitalNotificationSystem) Call_a_doctor(p p.Patient) {
+func (ns NotificationSystem) SendNotification(patient p.Patient) {
+	for _, observer := range ns.Observers {
+		str := fmt.Sprintf("Пациент %s поступил с диагнозом %s ", patient.GetName(), patient.GetDiagnosis())
+		observer.Update(str)
+	}
+}
+
+func (ns NotificationSystem) Call_a_doctor(p p.Patient) {
 
 }

@@ -1,7 +1,10 @@
 package main
 
 import (
-	"fmt"
+	cm "laba/command"
+	ns "laba/notification_system"
+	obs "laba/observer"
+	p "laba/patient"
 )
 
 type Event struct {
@@ -9,15 +12,10 @@ type Event struct {
 }
 
 func main() {
-	events := make(chan Event)
-
-	// listener (подписчик)
-	go func() {
-		for e := range events {
-			fmt.Println("received:", e.Name)
-		}
-	}()
-
-	// emitter (отправитель)
-	events <- Event{Name: "user_created"}
+	system := ns.Instance()
+	doctor := obs.NewDoctor("Петя")
+	system.AddObserver(doctor)
+	patient := p.NewPatient("Вася", 1)
+	command1 := cm.RegisterPatient{Service: *system, Patient: patient}
+	command1.Execute()
 }

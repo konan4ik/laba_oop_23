@@ -8,11 +8,19 @@ const (
 	StatusBlocked
 )
 
-type Observer interface {
-	Notify(action string)
+type Patient struct {
+	name      string
+	diagnosis Status
 }
 
-type Patient struct {
-	Name      string
-	Diagnosis Status
+func NewPatient(name string, diagnosis Status) *Patient {
+	return &Patient{name: name, diagnosis: diagnosis}
+}
+
+func (p Patient) GetName() string {
+	return p.name
+}
+
+func (p Patient) GetDiagnosis() string {
+	return p.diagnosis.String()
 }

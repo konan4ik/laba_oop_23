@@ -2,12 +2,14 @@ package command
 
 import (
 	ns "laba/notification_system"
+	p "laba/patient"
 )
 
-type register_patient struct {
-	service ns.HospitalNotificationSystem
+type RegisterPatient struct {
+	Service ns.NotificationSystem
+	Patient p.Patient
 }
 
-func (r register_patient) execute() {
-	r.service.Register_patient()
+func (r RegisterPatient) Execute() {
+	r.Service.RegisterPatient(r.Patient)
 }
