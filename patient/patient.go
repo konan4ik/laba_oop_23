@@ -3,9 +3,9 @@ package patient
 type Status int
 
 const (
-	StatusPending Status = iota
-	StatusActive
-	StatusBlocked
+	Грипп Status = iota
+	Зомби_вирус
+	Простуда
 )
 
 type Patient struct {

@@ -2,8 +2,8 @@ package main
 
 import (
 	cm "laba/command"
+	"laba/doctor"
 	ns "laba/notification_system"
-	obs "laba/observer"
 	p "laba/patient"
 )
 
@@ -12,10 +12,11 @@ type Event struct {
 }
 
 func main() {
-	system := ns.Instance()
-	doctor := obs.NewDoctor("Петя")
-	system.AddObserver(doctor)
+	system := ns.GetInstance()
 	patient := p.NewPatient("Вася", 1)
-	command1 := cm.RegisterPatient{Service: *system, Patient: patient}
-	command1.Execute()
+	doctor1 := doctor.NewDoctor("Петя", system)
+	doctor.NewDoctor("Петя2", system)
+	system.InvokeCommand(cm.NewRegisterPatient(system, patient))
+
+	doctor1.Destroy()
 }

@@ -2,40 +2,44 @@ package notification_system
 
 import (
 	"fmt"
-	o "laba/observer"
+	interfaces "laba/Interfaces"
+	"laba/event_datas"
 	p "laba/patient"
+	"laba/utilities"
+	"sync"
 )
 
 type NotificationSystem struct {
-	Observers []o.Observer
-	Patients  []p.Patient
+	OnNotification utilities.Event[event_datas.NotificationData]
+	Patients       []p.Patient
 }
 
-var instance *NotificationSystem
+var (
+	once     sync.Once
+	instance *NotificationSystem
+)
 
-func Instance() *NotificationSystem {
-	if instance == nil {
+func GetInstance() *NotificationSystem {
+	once.Do(func() {
 		instance = &NotificationSystem{}
-	}
+	})
 	return instance
-}
-
-func (ns *NotificationSystem) AddObserver(obs o.Observer) {
-	ns.Observers = append(ns.Observers, obs)
 }
 
 func (ns *NotificationSystem) RegisterPatient(patient p.Patient) {
 	ns.Patients = append(ns.Patients, patient)
-	ns.SendNotification(patient)
+	ns.OnNotification.Emit(event_datas.NotificationData{Patient: patient})
 }
 
-func (ns NotificationSystem) SendNotification(patient p.Patient) {
-	for _, observer := range ns.Observers {
-		str := fmt.Sprintf("Пациент %s поступил с диагнозом %s ", patient.GetName(), patient.GetDiagnosis())
-		observer.Update(str)
-	}
+func (ns *NotificationSystem) CallDoctor(patient p.Patient, doctor interfaces.Doctor_data) {
+	str := fmt.Sprintf("Доктор %s вызван к пациенту %s", doctor.GetName(), patient.GetName())
+	fmt.Println(str)
 }
 
-func (ns NotificationSystem) Call_a_doctor(p p.Patient) {
+func (ns *NotificationSystem) SendNotification() {
+	// ???
+}
 
+func (ns *NotificationSystem) InvokeCommand(c interfaces.Command) {
+	c.Execute()
 }
